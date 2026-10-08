@@ -1,0 +1,6 @@
+{
+  "name": "universetalk-assets",
+  "private": true,
+  "type": "module",
+  "devDependencies": { "sharp": "^0.33.5", "globby": "^14.0.2" }
+}
