@@ -1,29 +1,35 @@
 name: Build & deploy assets
 on:
   push: { branches: [main] }
+  pull_request:
   workflow_dispatch:
 permissions:
   contents: read
-  pages: write
-  id-token: write
-concurrency: { group: "pages", cancel-in-progress: true }
+concurrency:
+  group: pages-${{ github.event_name == 'pull_request' && github.ref || 'deploy' }}
+  cancel-in-progress: true
 jobs:
   build:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+        with: { fetch-depth: 0 } # full history: the previous version of each image is built from it
       - uses: actions/setup-node@v4
-        with: { node-version: 20 }
-      - run: npm install sharp globby
-      - run: node scripts/gen-images.mjs
-      - run: |
-          cp CNAME dist/ 2>/dev/null || true
-          cp index.html dist/ 2>/dev/null || true
+        with: { node-version: 22, cache: npm }
+      - run: npm ci
+      - run: npm test
+      - name: Build images (fails here if an image in src-images/ is not usable)
+        run: npm run build
+      - run: cp CNAME index.html dist/
       - uses: actions/upload-pages-artifact@v3
         with: { path: dist }
   deploy:
+    if: github.event_name != 'pull_request'
     needs: build
     runs-on: ubuntu-latest
+    permissions:
+      pages: write
+      id-token: write
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
