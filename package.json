@@ -2,5 +2,15 @@
   "name": "universetalk-assets",
   "private": true,
   "type": "module",
-  "devDependencies": { "sharp": "^0.33.5", "globby": "^14.0.2" }
+  "engines": {
+    "node": ">=22"
+  },
+  "scripts": {
+    "build": "node scripts/gen-images.mjs",
+    "test": "node --test"
+  },
+  "devDependencies": {
+    "sharp": "^0.35.5",
+    "svgo": "^4.1.0"
+  }
 }

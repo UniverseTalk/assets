@@ -1,0 +1,4 @@
+{
+  "card": { "widths": [160, 320, 480] },
+  "mobile_hero_bg": { "allowSmallSource": true }
+}
